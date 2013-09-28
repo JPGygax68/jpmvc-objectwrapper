@@ -1,11 +1,9 @@
 "use strict";
 
 var should = require('should');
+var _      = require('underscore');
 
 var wrapper = require('./main');
-
-//-------------------------------------
-// BASICS
 
 describe('Model', function() {
 
@@ -29,7 +27,7 @@ describe('Model', function() {
 
   describe('#set()', function() {
     it('Should modify a property and return it', function() {
-      objmod.set('firstname', 'Hans-Peter').should.be.equal('Hans-Peter');
+      objmod.set('firstname', 'Hans-Peter').should.equal('Hans-Peter');
     })
   })
 
@@ -50,10 +48,19 @@ describe('Model', function() {
       objmod.isCollection().should.be.false;
     })
   })
+  
+  describe('#getKeys()', function() {
+    it('Should return the names of all properties of a wrapped object', function() {
+      var keys = objmod.getKeys();
+      _.difference(keys, ['firstname', 'lastname']).length.should.equal(0);
+    })
+    it('Should return all indexes of a wrapped array', function() {
+      var keys = arrmod.getKeys();
+      arrmod.get(keys[0]).should.be.equal(arr[0]);
+      arrmod.get(keys[1]).should.be.equal(arr[1]);
+    })
+  })
 })
-
-//-------------------------------------
-// Notifications
 
 describe('Notifications', function() {
 

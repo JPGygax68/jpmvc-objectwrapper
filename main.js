@@ -28,6 +28,10 @@ Model.prototype.isCollection = function() {
   return _.isArray(this.data);
 }
 
+Model.prototype.getKeys = function() {
+  return _.keys(this.data);
+}
+
 Model.prototype.change = function(cb) {
   if (!this.change_callbacks) this.change_callbacks = [];
   this.change_callbacks.push(cb);
