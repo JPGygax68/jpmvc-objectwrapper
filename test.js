@@ -15,30 +15,39 @@ describe('Model', function() {
     })
   })
 
-  var obj1 = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
-  var model = wrapper.wrap(obj1);
+  var obj = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
+  var objmod = wrapper.wrap(obj);
+  
+  var arr = [ {name: 'Item 1'}, {name: 'Item 2'} ];
+  var arrmod = wrapper.wrap(arr);
 
   describe('#get()', function() {
     it('Should return a property', function() {
-      model.get('firstname').should.be.equal('Jean-Pierre');
+      objmod.get('firstname').should.be.equal('Jean-Pierre');
     })
   })
 
   describe('#set()', function() {
     it('Should modify a property and return it', function() {
-      model.set('firstname', 'Hans-Peter').should.be.equal('Hans-Peter');
+      objmod.set('firstname', 'Hans-Peter').should.be.equal('Hans-Peter');
     })
   })
 
   describe('#isObject()', function() {
     it('Should return true for a wrapped object', function() {
-      model.isObject().should.be.true;
+      objmod.isObject().should.be.true;
+    })
+    it('Should return false for a wrapped array', function() {
+      arrmod.isObject().should.be.false;
     })
   })
   
   describe('#isCollection()', function() {
     it('Should return true for a wrapped array', function() {
-      model.isCollection().should.be.false;
+      arrmod.isCollection().should.be.true;
+    })
+    it('Should return false for a wrapped object', function() {
+      objmod.isCollection().should.be.false;
     })
   })
 })
@@ -47,4 +56,6 @@ describe('Model', function() {
 // Notifications
 
 describe('Notifications', function() {
+
+
 })
