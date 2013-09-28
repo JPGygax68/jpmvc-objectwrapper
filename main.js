@@ -13,7 +13,11 @@ Model.prototype.get = function(key) {
 }
 
 Model.prototype.set = function(key, value) {
-  return (this.data[key] = value);
+  if (value !== this.data[key]) {
+    this.data[key] = value;
+    _.each(this.change_callbacks, function(cb) { cb.call(this, value) }, this);
+  }
+  return this.data[key];
 }
 
 Model.prototype.isObject = function() {
@@ -22,6 +26,11 @@ Model.prototype.isObject = function() {
 
 Model.prototype.isCollection = function() {
   return _.isArray(this.data);
+}
+
+Model.prototype.change = function(cb) {
+  if (!this.change_callbacks) this.change_callbacks = [];
+  this.change_callbacks.push(cb);
 }
 
 function wrap(data) {
