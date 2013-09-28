@@ -1,0 +1,8 @@
+{
+  "name": "jpmvc-objectwrapper",
+  "description": "Wraps plain JavaScript objects into jpmvc-conforming model objects.",
+  "devDependencies": {
+    "should": "~1.3.0",
+    "underscore": "~1.5.2"
+  }
+}
