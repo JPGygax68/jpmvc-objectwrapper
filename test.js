@@ -5,7 +5,7 @@ var _      = require('underscore');
 
 var wrapper = require('./main');
 
-describe('Model', function() {
+describe('Model basics', function() {
 
   describe('#wrap()', function() {
     it('Should return an object', function() {
@@ -58,6 +58,13 @@ describe('Model', function() {
       var keys = arrmod.getKeys();
       arrmod.get(keys[0]).should.be.equal(arr[0]);
       arrmod.get(keys[1]).should.be.equal(arr[1]);
+    })
+  })
+  
+  describe('#dispose()', function() {
+    it('Should cause subsequent get()s or set()s to throw an exception', function() {
+      objmod.dispose();
+      (function() { objmod.get('firstname') }).should.throw();
     })
   })
 })

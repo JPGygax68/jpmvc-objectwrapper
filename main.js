@@ -4,8 +4,9 @@ var _ = require('underscore');
 
 var cache = [];
 
-function Model(data) {
+function Model(data, index) {
   this.data = data;
+  this.index = index;
 }
 
 Model.prototype.get = function(key) {
@@ -37,16 +38,31 @@ Model.prototype.change = function(cb) {
   this.change_callbacks.push(cb);
 }
 
+Model.prototype.dispose = function() {
+  this.data = null;
+  delete cache[this.index];
+}
+
 function wrap(data) {
 
-  var wrapper = _.findWhere(cache, { data: data });
-  
-  if (!wrapper) {
-    wrapper = new Model(data);
-    cache.push(wrapper);
+  // Wrapper already exists ?
+  var wrapper = _.findWhere(cache, { data: data });  
+  if (wrapper) {
+    return wrapper;
   }
-  
-  return wrapper;
+  else {
+    // Reusable slot in cache ?
+    for (var index = 0; index < cache.length; index ++) {
+      if (!cache[index].data) {
+        wrapper = new Model(data, index);
+        return wrapper;
+      }
+    }
+    // No reusable slot
+    wrapper = new Model(data, cache.length);
+    cache.push(wrapper);
+    return wrapper;
+  }
 }
 
 module.exports = {
