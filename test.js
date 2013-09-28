@@ -4,12 +4,47 @@ var should = require('should');
 
 var wrapper = require('./main');
 
-( !! wrapper.wrap({}) ).should.be.ok;
+//-------------------------------------
+// BASICS
 
-var obj1 = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
+describe('Model', function() {
 
-var model = wrapper.wrap(obj1);
+  describe('#wrap()', function() {
+    it('Should return an object', function() {
+      ( !! wrapper.wrap({}) ).should.be.ok;
+    })
+  })
 
-model.get('firstname').should.be.equal('Jean-Pierre');
+  var obj1 = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
+  var model = wrapper.wrap(obj1);
 
-model.set('firstname', 'Hans-Peter').should.be.equal('Hans-Peter');
+  describe('#get()', function() {
+    it('Should return a property', function() {
+      model.get('firstname').should.be.equal('Jean-Pierre');
+    })
+  })
+
+  describe('#set()', function() {
+    it('Should modify a property and return it', function() {
+      model.set('firstname', 'Hans-Peter').should.be.equal('Hans-Peter');
+    })
+  })
+
+  describe('#isObject()', function() {
+    it('Should return true for a wrapped object', function() {
+      model.isObject().should.be.true;
+    })
+  })
+  
+  describe('#isCollection()', function() {
+    it('Should return true for a wrapped array', function() {
+      model.isCollection().should.be.false;
+    })
+  })
+})
+
+//-------------------------------------
+// Notifications
+
+describe('Notifications', function() {
+})
