@@ -49,15 +49,10 @@ describe('Model basics', function() {
     })
   })
   
-  describe('#getKeys()', function() {
+  describe('#getPropertyNames()', function() {
     it('Should return the names of all properties of a wrapped object', function() {
-      var keys = objmod.getKeys();
-      _.difference(keys, ['firstname', 'lastname']).length.should.equal(0);
-    })
-    it('Should return all indexes of a wrapped array', function() {
-      var keys = arrmod.getKeys();
-      arrmod.get(keys[0]).should.be.equal(arr[0]);
-      arrmod.get(keys[1]).should.be.equal(arr[1]);
+      var names = objmod.getPropertyNames();
+      _.difference(names, ['firstname', 'lastname']).length.should.equal(0);
     })
   })
   

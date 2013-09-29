@@ -1,10 +1,15 @@
 "use strict";
 
-var cache  = require('./cache');
-var Model  = require('./model');
+var _ = require('underscore');
+
+var Object = require('./object');
+var Array  = require('./array');
 
 function wrap(data) {
-  return cache.wrap(data, Model);
+  var wrapper;
+  if (_.isArray(data)) wrapper = new Array(data);
+  else                 wrapper = new Object(data);
+  return wrapper;
 }
 
 module.exports = {

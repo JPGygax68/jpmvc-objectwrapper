@@ -2,7 +2,11 @@
 
 var _ = require('underscore');
 
+var Wrapper = require('./wrapper');
+
 var cache = [];
+
+Wrapper.registerDisposeCallback( function(model, index) { delete cache[index] } );
 
 function wrap(data, Wrapper) {
 
@@ -16,6 +20,7 @@ function wrap(data, Wrapper) {
     for (var index = 0; index < cache.length; index ++) {
       if (!cache[index].data) {
         wrapper = new Wrapper(data, index);
+        cache[index] = wrapper;
         return wrapper;
       }
     }
