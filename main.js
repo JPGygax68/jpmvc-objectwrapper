@@ -33,6 +33,13 @@ Model.prototype.getKeys = function() {
   return _.keys(this.data);
 }
 
+Model.prototype.forEachItem = function(cb) {
+  _.each(this.data, function(item) { 
+    var model = wrap(item);
+    cb.call(this, model);
+  }, this)
+}
+
 Model.prototype.change = function(cb) {
   if (!this.change_callbacks) this.change_callbacks = [];
   this.change_callbacks.push(cb);

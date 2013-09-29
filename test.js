@@ -61,6 +61,18 @@ describe('Model basics', function() {
     })
   })
   
+  describe('#forEachItem()', function() {
+    it('Should call callback function for each item', function() {
+      var item_names = []
+      arrmod.forEachItem( function(item) {
+        item_names.push(item.get('name'));
+      })
+      item_names.length.should.equal(2);
+      item_names[0].should.equal('Item 1');
+      item_names[1].should.equal('Item 2');
+    })
+  })
+  
   describe('#dispose()', function() {
     it('Should cause subsequent get()s or set()s to throw an exception', function() {
       objmod.dispose();
