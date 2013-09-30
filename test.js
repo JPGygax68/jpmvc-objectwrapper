@@ -76,6 +76,19 @@ describe('Model basics', function() {
   })
 })
 
+describe('Collections (array wrapper)', function() {
+
+  var coll = wrapper.wrap( [ { firstname: 'Jean-Pierre', lastname: 'Gygax' }, { firstname: 'Ottorino', lastname: 'Respighi' } ] );
+
+  describe('addNewItem', function() {
+    it('Should create an object that has all the initial values specified in the first parameter', function() {
+      var new_obj = coll.addNewItem( { name: 'Apollo 11', height: 111 } );
+      new_obj.get('name').should.equal('Apollo 11');
+      new_obj.get('height').should.equal(111);
+    })
+  })
+})
+
 describe('Notifications', function() {
 
   var obj = { firstname: 'Jean-Pierre', lastname: 'Gygax' };

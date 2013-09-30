@@ -6,11 +6,13 @@ var Wrapper = require('./wrapper');
 var Object  = require('./object');
 var cache   = require('./cache');
 
-function Array() {
-  Wrapper.apply(this, arguments);
+function wrap(item) {
+  if (_.isArray(item)) return cache.wrap(item, Array );
+  else                 return cache.wrap(item, Object);
 }
 
-Array.wrap = function(data) {
+function Array() {
+  Wrapper.apply(this, arguments);
 }
 
 Array.prototype = new Wrapper();
@@ -21,11 +23,14 @@ Array.prototype.isCollection = function() { return true; }
 
 Array.prototype.forEachItem = function(cb) {
   _.each(this.data, function(item) { 
-    var model;
-    if (_.isArray(item)) model = cache.wrap(item, Array );
-    else                 model = cache.wrap(item, Object);
-    cb.call(this, model);
+    cb.call(this, wrap(item));
   }, this)
+}
+
+Array.prototype.addNewItem = function(init) {
+  var item = _.clone(init);
+  this.data.push(item);
+  return wrap(item);
 }
 
 module.exports = Array;
