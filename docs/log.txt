@@ -1,0 +1,28 @@
+2013-09-29
+----------
+
+The test suite works. Yet I feel somewhat less than satisfied. One reason is that I still go back-and-forth on some design decisions. Could be a sign that I'm still in the experimental stage, and that a redesign will have to come later on. Note to myself: I will now take note of uncertainties, then leave them be.
+
+Uncertainties: 
+
+- some method names
+	
+- whether some methods are needed at all
+
+- how far to treat arrays and objects similarly, and where to make a clear distinction (current state: separate Wrapper classes with a common ancestor)
+	
+- how to handle collections in such a way that support for large, non-indexed collections won't become impractical later on
+
+- whether the cache can be considered efficient enough, even for a first attempt
+
+- whether I should try right away to create implementation-independent tests for Object and Collection "interfaces", or wait till the object wrapper is complete.
+
+All in all though, I'm please at this first step toward building a real Model-View-Controller library.
+
+Things left to do: Collection#addNewObject(); decide whether to support arrays of non-object values through a "virtual" property, or simply let them be arrays (tending towards the latter right now).
+
+I wrote up some notes today regarding the implementation of a filesystem adapter library. No need to write it all down here, but the basic principle is make a Collection out of a directory; Objects out of JSON files; and binary files into blob properties (buffers).
+
+Next steps:
+
+- Implement Collection#newItem(), complete with notifications

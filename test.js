@@ -81,19 +81,19 @@ describe('Notifications', function() {
   var obj = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
   var objmod = wrapper.wrap(obj);
   
-  describe('#change()', function() {
+  describe('#propertyChanged()', function() {
     it('Should be called when a member is set()', function() {
       objmod.set('firstname', 'Jean-Pierre');
       var triggered = false;
-      objmod.change( function() { triggered = true } );
+      objmod.propertyChanged( function() { triggered = true } );
       objmod.set('firstname', 'Hans-Peter');
       triggered.should.be.true;
     })
     it('Triggers multiple callbacks', function() {
       objmod.set('firstname', 'Jean-Pierre');
       var triggered1 = false, triggered2 = false;
-      objmod.change( function() { triggered1 = true } );
-      objmod.change( function() { triggered2 = true } );
+      objmod.propertyChanged( function() { triggered1 = true } );
+      objmod.propertyChanged( function() { triggered2 = true } );
       objmod.set('firstname', 'Hans-Peter');
       (triggered1 && triggered2).should.be.true;
     })
