@@ -7,30 +7,37 @@ var Object  = require('./object');
 var cache   = require('./cache');
 
 function wrap(item) {
-  if (_.isArray(item)) return cache.wrap(item, Array );
+  if (_.isArray(item)) return cache.wrap(item, ArrayWrapper );
   else                 return cache.wrap(item, Object);
 }
 
-function Array() {
+function ArrayWrapper() {
   Wrapper.apply(this, arguments);
 }
 
-Array.prototype = new Wrapper();
-Array.prototype.constructor = Array;
+ArrayWrapper.prototype = new Wrapper();
+ArrayWrapper.prototype.constructor = ArrayWrapper;
 
-Array.prototype.isObject     = function() { return false; }
-Array.prototype.isCollection = function() { return true; }
+ArrayWrapper.prototype.isObject     = function() { return false; }
+ArrayWrapper.prototype.isCollection = function() { return true; }
 
-Array.prototype.forEachItem = function(cb) {
+ArrayWrapper.prototype.forEachItem = function(cb) {
   _.each(this.data, function(item) { 
     cb.call(this, wrap(item));
   }, this)
 }
 
-Array.prototype.addNewItem = function(init) {
+ArrayWrapper.prototype.addNewItem = function(init) {
   var item = _.clone(init);
   this.data.push(item);
-  return wrap(item);
+  var wrapper = wrap(item);
+  _.each(this.insertion_callbacks, function(cb) { cb.call(this, wrapper) });
+  return wrapper;
 }
 
-module.exports = Array;
+ArrayWrapper.prototype.itemInserted = function(cb) {
+  if (!this.insertion_callbacks) this.insertion_callbacks = [];
+  this.insertion_callbacks.push(cb);
+}
+
+module.exports = ArrayWrapper;

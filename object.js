@@ -1,28 +1,31 @@
 "use strict";
 
 var _ = require('underscore');
+var Q = require('q');
 
 var Wrapper = require('./wrapper');
 
-function Object() {
+function ObjectWrapper() {
   Wrapper.apply(this, arguments);
 }
 
-Object.prototype = new Wrapper();
-Object.prototype.constructor = Object;
+ObjectWrapper.prototype = new Wrapper();
+ObjectWrapper.prototype.constructor = ObjectWrapper;
 
-Object.prototype.isObject     = function() { return true; }
-Object.prototype.isCollection = function() { return false; }
+ObjectWrapper.prototype.isObject     = function() { return true; }
+ObjectWrapper.prototype.isCollection = function() { return false; }
 
-Object.prototype.getPropertyNames = function() {
+ObjectWrapper.prototype.getPropertyNames = function() {
   return _.keys(this.data);
 }
 
-Object.prototype.get = function(key) {
-  return this.data[key];
+ObjectWrapper.prototype.get = function(key) {
+  var def = Q.defer();
+  def.resolve(this.data[key]);
+  return def.promise;
 }
 
-Object.prototype.set = function(key, value) {
+ObjectWrapper.prototype.set = function(key, value) {
   if (value !== this.data[key]) {
     this.data[key] = value;
     _.each(this.change_callbacks, function(cb) { cb.call(this, value) }, this);
@@ -30,9 +33,9 @@ Object.prototype.set = function(key, value) {
   return this.data[key];
 }
 
-Object.prototype.propertyChanged = function(cb) {
+ObjectWrapper.prototype.propertyChanged = function(cb) {
   if (!this.change_callbacks) this.change_callbacks = [];
   this.change_callbacks.push(cb);
 }
 
-module.exports = Object;
+module.exports = ObjectWrapper;

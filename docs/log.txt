@@ -1,3 +1,25 @@
+2013-10-01
+----------
+
+I just successfully implemented the first test case for what will become the JPMVC Object "interface" (I say successfully because, because I'm using promises inside the test routines, and I wasn't at all sure whether that would work). 
+
+I'm using quotation marks for the word "interface" here because interfaces are not part of the JavaScript language.
+Actually, my intent is to sort of "replace" formal interface definitions with the test cases I have just begun (see test-lib/model-tests.js). The idea is that these tests will an instance of a model together with a "raw" JavaScript object or array, then execute test cases using the raw object as a reference to compare against. Hopefully, this pattern *should* adapt to all future implementations of the Object and Collection interfaces.
+
+One uncertainty bothering me right now is whether or not to define the whole interfaces as promise-based. Disadvantages: for synchronous implementations, wrapping the results in promises is both a waste of cycles and a way to render even trivial code hard to read. Advantage: a predictable and clear interface.
+
+Right now, I think the way to go is to allow both synchronous and promise-based operation, and making it part of the specification to use Q.when() on all functions UNLESS the programmer can be sure that the particular implementation being used is synchronous.
+This has drawbacks too - it's a classical trap producing code that fails when you least expect it (writing with a sychronous interface in mind, then replacing it with an asynchronous one).
+
+Alternatives:
+	a) use dual methods, adding "Sync" to synchronous versions of the methods (drawbacks: long, ugly - and what if the implementation can't support synchronous?)
+	b) define synchronous and asynchronous versions of the interfaces (the "wrapper" implementations would then likely be the only ones to support both, or exist in both forms)
+
+I'm tending for (b) right now. Not quite happy with it though - what if certain operations could be done synchronously, but not others? get()/set() could arguably always be implemented
+synchronously except for blobs - though that last exception, any exception, renders the other cases sort of moot.
+
+Ok. The safe choice is asynchronous, always. To make things nicer, how about sget() and sset() (s for synchronous), which will throw exceptions if not supported? This will make it much less likely to program doomed-to-fail-in-the-future code. [Note to myself: program tests such that synchronous methods must either deliver the expected result right away, or throw an exception.]
+
 2013-09-29
 ----------
 

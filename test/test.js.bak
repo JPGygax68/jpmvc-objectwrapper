@@ -3,7 +3,7 @@
 var should = require('should');
 var _      = require('underscore');
 
-var wrapper = require('./main');
+var wrapper = require('../main');
 
 describe('Model basics', function() {
 
@@ -56,18 +56,6 @@ describe('Model basics', function() {
     })
   })
   
-  describe('#forEachItem()', function() {
-    it('Should call callback function for each item', function() {
-      var item_names = []
-      arrmod.forEachItem( function(item) {
-        item_names.push(item.get('name'));
-      })
-      item_names.length.should.equal(2);
-      item_names[0].should.equal('Item 1');
-      item_names[1].should.equal('Item 2');
-    })
-  })
-  
   describe('#dispose()', function() {
     it('Should cause subsequent get()s or set()s to throw an exception', function() {
       objmod.dispose();
@@ -78,15 +66,51 @@ describe('Model basics', function() {
 
 describe('Collections (array wrapper)', function() {
 
-  var coll = wrapper.wrap( [ { firstname: 'Jean-Pierre', lastname: 'Gygax' }, { firstname: 'Ottorino', lastname: 'Respighi' } ] );
+  function makeTestArray() {
+    return wrapper.wrap( [ { firstname: 'Jean-Pierre', lastname: 'Gygax' }, { firstname: 'Ottorino', lastname: 'Respighi' } ] );
+  }
 
-  describe('addNewItem', function() {
+  describe('addNewItem()', function() {
     it('Should create an object that has all the initial values specified in the first parameter', function() {
+      var coll = makeTestArray();
       var new_obj = coll.addNewItem( { name: 'Apollo 11', height: 111 } );
       new_obj.get('name').should.equal('Apollo 11');
       new_obj.get('height').should.equal(111);
     })
+    it('Should trigger a "item-inserted" event (passing a Model giving access to the new item)', function() {
+      var coll = makeTestArray();
+      var triggered = false;
+      coll.itemInserted( function(item) {
+        triggered = true;
+        item.get('name').should.be.equal('Apollo 13');
+        item.get('success').should.be.false;
+      })
+      var obj = coll.addNewItem( { name: 'Apollo 13', success: false } );
+      triggered.should.be.true; // synchronous - other Collection implementations may not be
+    })
   })
+  
+  describe('#forEachItem()', function() {
+    var coll = wrapper.wrap([ {name: 'Item 1'}, {name: 'Item 2'} ]);
+    it('Should call callback function for each item', function() {
+      var item_names = []
+      coll.forEachItem( function(item) {
+        item_names.push(item.get('name'));
+      })
+      item_names.length.should.equal(2);
+      item_names[0].should.equal('Item 1');
+      item_names[1].should.equal('Item 2');
+    })
+  })
+  
+  describe('Item#remove()', function() {
+    it('Should remove the item from the Collection', function() {
+      var coll = makeTestArray();
+      // TODO
+      // - decide on the Collection interface methods for accessing items (by index number, by iteration, by lookup key; plus bookmarks ?)
+    })
+  })
+  
 })
 
 describe('Notifications', function() {
