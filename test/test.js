@@ -11,6 +11,7 @@ describe('ObjectWrapper', function() {
   var obj = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
   var model = wrapper.wrap(obj);
   tests.readOnlyObject('ObjectWrapper', model, obj);
+  tests.object('ObjectWrapper', model, obj);
 })
 
 describe('ArrayWrapper', function() {
