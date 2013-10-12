@@ -14,7 +14,7 @@ function testReadOnlyObject(class_, model, reference) {
           return Q.when( model.get(name) )
             .then( function(value) { value.should.equal(refval) } )
         }))
-        .then( function() { done() } )
+        .done( function() { done() } )
       })
     })
   })
@@ -57,10 +57,10 @@ function testObject(class_, model, reference) {
           return Q.when( model.get(name) )
             .then( function(value)  { return model.set(name, value + value) } )
             .then( function()       { return model.get(name) } )
-            .then( function(newval) { if (newval !== (oldval+oldval)) throw new Error('Property value after modification differs from expected value') } )
+            .then( function(newval) { newval.should.equal(oldval+oldval) } )
             .then( function()       { count ++ } )
         }) )
-        .then( function() { 
+        .done( function() { 
           if (count === 0) throw new Error('test failed because no reference object has no properties?');
           done();
         })
