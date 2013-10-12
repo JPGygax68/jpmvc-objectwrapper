@@ -46,11 +46,13 @@ ArrayWrapper.prototype.each = function() {
 }
 
 ArrayWrapper.prototype.addNewItem = function(init) {
+  var def = q.defer();
   var item = _.clone(init);
   this.data.push(item);
   var wrapper = wrap(item);
   _.each(this.insertion_callbacks, function(cb) { cb.call(this, wrapper) });
-  return wrapper;
+  def.resolve(wrapper);
+  return def.promise;
 }
 
 ArrayWrapper.prototype.itemInserted = function(cb) {

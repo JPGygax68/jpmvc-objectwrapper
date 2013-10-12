@@ -21,4 +21,7 @@ describe('ArrayWrapper', function() {
   ];
   var model = wrapper.wrap(arr);
   tests.readOnlyCollection('ArrayWrapper', model, arr);
+  
+  var new_items = [ { firstname: 'Bugs', lastname: 'Bunny' }, { firstname: 'Daffy', lastname: 'Duck' } ];
+  tests.collection('ArrayWrapper', model, new_items );
 })

@@ -2,7 +2,7 @@
 
 var should = require('should');
 var _      = require('underscore');
-var Q      = require('q');
+var q      = require('q');
 
 function testReadOnlyObject(class_, model, reference) {
   
@@ -10,8 +10,8 @@ function testReadOnlyObject(class_, model, reference) {
   
     describe('#get()', function() {
       it ('must give access to all properties', function(done) {
-        Q.all( _.map(reference, function(refval, name) {
-          return Q.when( model.get(name) )
+        q.all( _.map(reference, function(refval, name) {
+          return q.when( model.get(name) )
             .then( function(value) { value.should.equal(refval) } )
         }))
         .done( function() { done() } )
@@ -52,16 +52,16 @@ function testObject(class_, model, reference) {
     
       it('must allow properties to be modified', function(done) {
         var count = 0;
-        Q.all( _.map(reference, function(curval, name) {
+        q.all( _.map(reference, function(curval, name) {
           var oldval = curval;
-          return Q.when( model.get(name) )
+          return q.when( model.get(name) )
             .then( function(value)  { return model.set(name, value + value) } )
             .then( function()       { return model.get(name) } )
             .then( function(newval) { newval.should.equal(oldval+oldval) } )
             .then( function()       { count ++ } )
         }) )
         .done( function() { 
-          if (count === 0) throw new Error('test failed because no reference object has no properties?');
+          if (count === 0) throw new Error('test failed because reference object has no properties?');
           done();
         })
       })
@@ -69,11 +69,33 @@ function testObject(class_, model, reference) {
   })
 }
 
+function testCollection(class_, model, new_item_refs) {
+
+  describe('It must implement the "Collection" interface', function() {
+  
+    describe('#addNewItem', function() {
+    
+      it('Must add new items that must contain at least the values passed to when adding', function(done) {
+        q.all( _.map(new_item_refs, function(new_item_ref) {
+          return model.addNewItem( _.clone(new_item_ref) )
+            .then( function(new_item) {
+              return q.all( _.map(new_item_ref, function(refval, name) { 
+                return new_item.get(name).then( function(value) { value.should.equal(refval); } )
+              }) )
+            })
+        }) )
+        .then( function() { done() })
+      })
+      
+    })
+  })
+}
+
 module.exports = {
   readOnlyObject: testReadOnlyObject,
   readOnlyCollection: testReadOnlyCollection,
-  object: testObject /*,
-  collection: testCollection */
+  object: testObject,
+  collection: testCollection
 }
 
 //----------------------

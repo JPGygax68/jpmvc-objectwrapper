@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require('underscore');
-var Q = require('q');
+var q = require('q');
 
 var Wrapper = require('./wrapper');
 
@@ -20,7 +20,7 @@ ObjectWrapper.prototype.getPropertyNames = function() {
 }
 
 ObjectWrapper.prototype.get = function(key) {
-  var def = Q.defer();
+  var def = q.defer();
   def.resolve(this.data[key]);
   return def.promise;
 }
