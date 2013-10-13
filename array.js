@@ -78,6 +78,14 @@ ArrayWrapper.prototype.itemRemoved = function(cb) {
   this.removal_callbacks.push(cb);
 }
 
+ArrayWrapper.prototype.find = function(values) {
+  var def = q.defer();
+  var obj = _.findWhere(this.data, values);
+  if (obj) def.resolve( wrap(obj, this) );
+  else     def.resolve(null);
+  return def.promise;
+}
+
 ArrayWrapper.prototype._removingItem = function(wrapper) {
   //console.log('_removingItem');
   if (this.removal_callbacks) {

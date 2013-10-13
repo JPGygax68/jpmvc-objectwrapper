@@ -31,22 +31,29 @@ function testReadOnlyObject(class_, model, reference) {
     })
     
     describe('#getAll()', function() {
+      // TODO: whether getAll() should be recursive is not yet defined
       it('must get all properties into a JS object', function(done) {
         model.getAll()
           .then( function(obj) { _.isEqual(obj, reference).should.be.ok } )
           .done( function() { done() } ); 
       })
     })
+    
+    /*
+    describe('#isEqual()', function() {
+      it('must return true if and only if
+    })
+    */
   })
 }
 
 function testReadOnlyCollection(class_, model, reference) {
   
-  describe('It must implement the "Collection (read-only)" interface', function() {
+  describe('It must implement the "Collection (read-only)" interface:', function() {
   
     describe('#each()', function() {
       
-      it('must return a promise whose progress() method iterates over contained items', function(done) {
+      it('must return a promise whose progress() method iterates over contained items:', function(done) {
         var used = []; // "tick off" list
         var remaining = reference.length;
         
@@ -59,8 +66,22 @@ function testReadOnlyCollection(class_, model, reference) {
           if (remaining === 0) done();
         })
       })
-      
     })
+    
+    describe('#find()', function() {
+    
+      it('must find a contained item by its properties', function(done) {
+        q.all( _.map( reference, function(refobj) {          
+          return model.find( _.clone(refobj) )
+            .then( function(item) { 
+              return item.getAll()
+                .then( function(obj) { _.isEqual(obj, refobj).should.be.true } )
+            })
+        }))
+        .done( function() { done() } )
+      })
+    })
+    
   })
 }
 
