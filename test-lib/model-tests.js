@@ -166,18 +166,24 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
     describe('item#remove()', function() {
     
       it('must remove the item from the collection, triggering itemRemoved()', function(done) {
-        model.addNewItem( _.clone(new_item_refs[0]) )
-        .then( function(new_item) {        
-          var triggered = false;
-          model.itemRemoved( function(item) { triggered = true } );
-          new_item.remove()
-            .then( function(wrapper) { 
-              triggered.should.be.true;
-              return checkObjectModelAgainstReference(wrapper, new_item_refs[0]);
-            })
-            .done( function() { done() } )
-        })
-        .done();
+        var initial_count;
+        model.count()
+          .then( function(n) { initial_count = n } )
+          .then( function()  { return model.addNewItem( _.clone(new_item_refs[0]) ) } )
+          .then( function(new_item) {        
+            var triggered = false;
+            model.itemRemoved( function(item) { triggered = true } );
+            new_item.remove()
+              .then( function(wrapper) { 
+                triggered.should.be.true;              
+                return checkObjectModelAgainstReference(wrapper, new_item_refs[0]);
+              })
+              .then( function() {
+                return model.count().then( function(n) { n.should.equal(initial_count) } )
+              })
+              .done( function() { done() } )
+          })
+          .done();
       })
     })
     

@@ -95,6 +95,9 @@ ArrayWrapper.prototype.find = function(values) {
 
 ArrayWrapper.prototype._removingItem = function(wrapper) {
   //console.log('_removingItem');
+  var i = _.indexOf(this.data, wrapper.data);
+  console.assert(i >= 0);
+  this.data.splice(i, 1);
   if (this.removal_callbacks) {
     _.each(this.removal_callbacks, function(cb) {
       cb.call(this, wrapper);
