@@ -33,6 +33,12 @@ ObjectWrapper.prototype.set = function(key, value) {
   return this.data[key];
 }
 
+ObjectWrapper.prototype.getAll = function() {
+  var def = q.defer();
+  def.resolve( _.clone(this.data) );
+  return def.promise;
+}
+
 ObjectWrapper.prototype.propertyChanged = function(cb) {
   if (!this.change_callbacks) this.change_callbacks = [];
   this.change_callbacks.push(cb);

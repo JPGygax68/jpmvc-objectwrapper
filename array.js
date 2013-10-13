@@ -43,12 +43,20 @@ ArrayWrapper.prototype.addNewItem = function(init) {
   var wrapper = wrap(item, this);
   wrapper.container = this;
   
+  // Add a remove() method
+  wrapper.remove = function() {
+    var def = q.defer();
+    this.container._removingItem(this);
+    def.resolve();
+    return def.promise;
+  }.bind(wrapper);
+  
   // Override the dispose() method
   var orig_dispose = wrapper.dispose;
   wrapper.dispose = function() {
     var def = q.defer();
     //console.log('item wrapper dispose', this);
-    this.container._deletingItem(this);
+    this.container._removingItem(this);
     orig_dispose.call(this);
     def.resolve();
     return def.promise;
@@ -70,8 +78,8 @@ ArrayWrapper.prototype.itemRemoved = function(cb) {
   this.removal_callbacks.push(cb);
 }
 
-ArrayWrapper.prototype._deletingItem = function(wrapper) {
-  //console.log('_deletingItem');
+ArrayWrapper.prototype._removingItem = function(wrapper) {
+  //console.log('_removingItem');
   if (this.removal_callbacks) {
     _.each(this.removal_callbacks, function(cb) {
       cb.call(this, wrapper);

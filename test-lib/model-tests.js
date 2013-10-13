@@ -4,6 +4,8 @@ var should = require('should');
 var _      = require('underscore');
 var q      = require('q');
 
+// Helper functions -------------------
+
 function checkObjectModelAgainstReference(model, reference) {
 
   return q.all( _.map(_.clone(reference), function(refval, name) {
@@ -12,14 +14,27 @@ function checkObjectModelAgainstReference(model, reference) {
   }))
 }
 
+function checkCollectionModelAgainstReference(model, reference) {
+}
+
+// Main functions -------------------------------
+
 function testReadOnlyObject(class_, model, reference) {
   
   describe('It must implement the "Object (read-only)" interface', function() {
   
     describe('#get()', function() {
-      it ('must give access to all properties', function(done) {
+      it('must give access to all properties', function(done) {
         checkObjectModelAgainstReference(model, reference)
         .done( function() { done() } )
+      })
+    })
+    
+    describe('#getAll()', function() {
+      it('must get all properties into a JS object', function(done) {
+        model.getAll()
+          .then( function(obj) { _.isEqual(obj, reference).should.be.ok } )
+          .done( function() { done() } ); 
       })
     })
   })
@@ -87,7 +102,7 @@ function testObject(class_, model, reference) {
   })
 }
 
-function testCollection(class_, model, new_item_refs) {
+function testCollection(class_, model, original_item_refs, new_item_refs) {
 
   describe('must implement the "Collection" interface:', function() {
   
@@ -117,20 +132,39 @@ function testCollection(class_, model, new_item_refs) {
       })
     })
     
-    describe('item#dispose()', function() {
+    /*
+    describe('item#remove()', function() {
     
-      model.addNewItem( _.clone(new_item_refs[0]) )
-      .then( function(new_item) {
-        
-        it('must trigger itemRemoved() on containing Collection', function(done) {
+      it('must trigger itemRemoved() on the containing Collection', function(done) {
+        model.addNewItem( _.clone(new_item_refs[0]) )
+        .then( function(new_item) {        
           var triggered = false;
           model.itemRemoved( function(item) { triggered = true } );
-          new_item.dispose()
-          .then( function() { triggered.should.be.ok } )
-          .done( function() { done() } )
+          new_item.remove()
+            .then( function(wrapper) { 
+              triggered.should.be.ok;
+              return checkObjectModelAgainstReference(wrapper, new_item_refs[0]);
+            })
+            .done( function() { done() } )
         })
+        .done();
       })
-      .done();
+    })
+    */
+    
+    describe('item#dispose()', function() {
+    
+      it('must trigger itemRemoved() on the containing Collection', function(done) {
+        model.addNewItem( _.clone(new_item_refs[0]) )
+          .then( function(new_item) {        
+            var triggered = false;
+            model.itemRemoved( function(item) { triggered = true } );
+            new_item.dispose()
+              .then( function() { triggered.should.be.ok } )
+              .done( function() { done() } )
+          })
+          .done();
+      })
     })
   })
 }
