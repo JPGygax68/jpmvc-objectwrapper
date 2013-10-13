@@ -189,13 +189,18 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
     
     describe('item#dispose()', function() {
     
-      it('must trigger itemRemoved() on the containing Collection', function(done) {
+      it('must remove the item and delete it (trigger itemRemoved() on the collection, deleted() on the item)', function(done) {
         model.addNewItem( _.clone(new_item_refs[0]) )
           .then( function(new_item) {        
-            var triggered = false;
-            model.itemRemoved( function(item) { triggered = true } );
+            var removed = false;
+            var deleted = false;
+            new_item.deleted( function() { deleted = true } );
+            model.itemRemoved( function(item) { removed = true } );
             new_item.dispose()
-              .then( function() { triggered.should.be.true } )
+              .then( function() { 
+                removed.should.be.true;
+                deleted.should.be.true;
+              })
               .done( function() { done() } )
           })
           .done();

@@ -62,7 +62,6 @@ ArrayWrapper.prototype.addNewItem = function(init) {
   var orig_dispose = wrapper.dispose;
   wrapper.dispose = function() {
     var def = q.defer();
-    //console.log('item wrapper dispose', this);
     this.container._removingItem(this);
     orig_dispose.call(this);
     def.resolve();
