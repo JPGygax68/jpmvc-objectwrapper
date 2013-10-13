@@ -82,6 +82,16 @@ function testReadOnlyCollection(class_, model, reference) {
       })
     })
     
+    describe('#count()', function() {
+      it('must return the number of items in the collection', function(done) {
+        model.count()
+          .then( function(n) { 
+            n.should.equal(reference.length)
+          })
+          .done( function() { done() } )
+      })
+    })
+    
   })
 }
 
@@ -153,17 +163,16 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
       })
     })
     
-    /*
     describe('item#remove()', function() {
     
-      it('must trigger itemRemoved() on the containing Collection', function(done) {
+      it('must remove the item from the collection, triggering itemRemoved()', function(done) {
         model.addNewItem( _.clone(new_item_refs[0]) )
         .then( function(new_item) {        
           var triggered = false;
           model.itemRemoved( function(item) { triggered = true } );
           new_item.remove()
             .then( function(wrapper) { 
-              triggered.should.be.ok;
+              triggered.should.be.true;
               return checkObjectModelAgainstReference(wrapper, new_item_refs[0]);
             })
             .done( function() { done() } )
@@ -171,7 +180,6 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
         .done();
       })
     })
-    */
     
     describe('item#dispose()', function() {
     
@@ -181,7 +189,7 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
             var triggered = false;
             model.itemRemoved( function(item) { triggered = true } );
             new_item.dispose()
-              .then( function() { triggered.should.be.ok } )
+              .then( function() { triggered.should.be.true } )
               .done( function() { done() } )
           })
           .done();

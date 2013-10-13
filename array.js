@@ -3,9 +3,10 @@
 var _ = require('underscore');
 var q = require('q');
 
-var Wrapper = require('./wrapper');
-var Object  = require('./object');
-var cache   = require('./cache');
+var Wrapper    = require('./wrapper');
+var Object     = require('./object');
+var cache      = require('./cache');
+var Collection = require('./collection');
 
 /* Collection implementation: ArrayWrapper */
 
@@ -34,6 +35,12 @@ ArrayWrapper.prototype.each = function() {
   return def.promise;
 }
 
+ArrayWrapper.prototype.count = function() {
+  var def = q.defer();
+  def.resolve( this.data.length );
+  return def.promise;
+}
+
 ArrayWrapper.prototype.addNewItem = function(init) {
   
   var def = q.defer();
@@ -47,7 +54,7 @@ ArrayWrapper.prototype.addNewItem = function(init) {
   wrapper.remove = function() {
     var def = q.defer();
     this.container._removingItem(this);
-    def.resolve();
+    def.resolve(this);
     return def.promise;
   }.bind(wrapper);
   
