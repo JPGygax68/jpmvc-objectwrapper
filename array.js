@@ -55,7 +55,7 @@ ArrayWrapper.prototype.addNewItem = function(init) {
   return def.promise;
 }
 
-ArrayWrapper.prototype.itemInserted = function(cb) {
+ArrayWrapper.prototype.itemAdded = function(cb) {
   if (!this.insertion_callbacks) this.insertion_callbacks = [];
   this.insertion_callbacks.push(cb);
 }

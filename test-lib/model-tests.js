@@ -4,16 +4,20 @@ var should = require('should');
 var _      = require('underscore');
 var q      = require('q');
 
+function checkObjectModelAgainstReference(model, reference) {
+  return q.all( _.map(_.clone(reference), function(refval, name) {
+    return q.when( model.get(name) )
+      .then( function(value) { value.should.equal(refval) } )
+  }))
+}
+
 function testReadOnlyObject(class_, model, reference) {
   
   describe('It must implement the "Object (read-only)" interface', function() {
   
     describe('#get()', function() {
       it ('must give access to all properties', function(done) {
-        q.all( _.map(reference, function(refval, name) {
-          return q.when( model.get(name) )
-            .then( function(value) { value.should.equal(refval) } )
-        }))
+        checkObjectModelAgainstReference(model, reference)
         .done( function() { done() } )
       })
     })
@@ -87,6 +91,16 @@ function testCollection(class_, model, new_item_refs) {
         .then( function() { done() })
       })
       
+      it('Must trigger itemAdded() callback event during call to addNewItem()', function(done) {
+        var new_item;
+        model.itemAdded( function(item) { new_item = item } );
+        model.addNewItem( _.clone(new_item_refs[0]) )
+          .then( function(item) { 
+            new_item.should.be.ok;
+            checkObjectModelAgainstReference(item, new_item_refs[0]);
+          } )
+          .done( done.bind() )
+      })
     })
   })
 }
