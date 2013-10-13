@@ -38,4 +38,17 @@ ObjectWrapper.prototype.propertyChanged = function(cb) {
   this.change_callbacks.push(cb);
 }
 
+ObjectWrapper.prototype.deleted = function(cb) {
+  if (!this.deletion_callbacks) this.deletion_callbacks = [];
+  this.deletion_callbacks.push(cb);
+}
+
+ObjectWrapper.prototype.dispose = function() {
+  var def = q.defer();
+  Wrapper.prototype.dispose.call(this);
+  _.each(this.deletion_callbacks, function(cb) { cb.call(this) }, this);
+  def.resolve();
+  return def.promise;
+}
+
 module.exports = ObjectWrapper;

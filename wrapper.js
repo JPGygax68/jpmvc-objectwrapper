@@ -6,6 +6,7 @@ var cache = [];
 var dispose_callback;
 
 function Wrapper(data, index) {
+  //console.log('Wrapper()', data, index);
   this.data = data;
   this.index = index;
 }

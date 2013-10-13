@@ -5,6 +5,7 @@ var _      = require('underscore');
 var q      = require('q');
 
 function checkObjectModelAgainstReference(model, reference) {
+
   return q.all( _.map(_.clone(reference), function(refval, name) {
     return q.when( model.get(name) )
       .then( function(value) { value.should.equal(refval) } )
@@ -54,7 +55,7 @@ function testObject(class_, model, reference) {
   
     describe('#set()', function() {
     
-      it('must allow properties to be modified', function(done) {
+      it('Must allow properties to be modified', function(done) {
         var count = 0;
         q.all( _.map(reference, function(curval, name) {
           var oldval = curval;
@@ -70,16 +71,29 @@ function testObject(class_, model, reference) {
         })
       })
     })
+    
+    describe('#dispose()', function() {
+    
+      it('Must trigger a deleted() callback event', function(done) {
+        var triggered;
+        model.deleted( function() { triggered = true } );
+        model.dispose()
+        .then( function() {
+          triggered.should.be.ok;
+        })
+        .done( function() { done() } )
+      })
+    })
   })
 }
 
 function testCollection(class_, model, new_item_refs) {
 
-  describe('It must implement the "Collection" interface', function() {
+  describe('must implement the "Collection" interface:', function() {
   
-    describe('#addNewItem', function() {
+    describe('#addNewItem()', function() {
     
-      it('Must add new items that must contain at least the values passed to when adding', function(done) {
+      it('must add new item containing at least the values passed as parameter object', function(done) {
         q.all( _.map(new_item_refs, function(new_item_ref) {
           return model.addNewItem( _.clone(new_item_ref) )
             .then( function(new_item) {
@@ -91,8 +105,8 @@ function testCollection(class_, model, new_item_refs) {
         .then( function() { done() })
       })
       
-      it('Must trigger itemAdded() callback event during call to addNewItem()', function(done) {
-        var new_item;
+      it('must trigger itemAdded() callback event', function(done) {
+        var new_item = null;
         model.itemAdded( function(item) { new_item = item } );
         model.addNewItem( _.clone(new_item_refs[0]) )
           .then( function(item) { 
@@ -101,6 +115,22 @@ function testCollection(class_, model, new_item_refs) {
           } )
           .done( done.bind() )
       })
+    })
+    
+    describe('item#dispose()', function() {
+    
+      model.addNewItem( _.clone(new_item_refs[0]) )
+      .then( function(new_item) {
+        
+        it('must trigger itemRemoved() on containing Collection', function(done) {
+          var triggered = false;
+          model.itemRemoved( function(item) { triggered = true } );
+          new_item.dispose()
+          .then( function() { triggered.should.be.ok } )
+          .done( function() { done() } )
+        })
+      })
+      .done();
     })
   })
 }
