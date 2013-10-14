@@ -1,3 +1,42 @@
+2013-10-14
+----------
+
+Wanted to dive right into this "large property" business, but (thankfully) did some research first.
+
+I think the answer is that Object#get() should deliver "large" values as "stream"-based objects, following the standard established by Kris Kowalski's q-io library, which defines Readers and Writers.
+
+Therefore, Object#get() should return an object that implements an interface I shall call "Streamable", offering a single method open(). That method should take an option argument loosely following its definition in q-io/fs; meaning that it should accept:
+  1) a "flags" property, which however must only implement the "w" and "r" values. In fact, a read-only collection should not accept the values "w" or "a" (though I will not require that an exception be thrown in such cases)
+  2) a "charset" property, which shall accept (at minimum) the values "utf-8" (the default if omitted) and "binary".
+
+Streamable#open() shall return an object conforming to the Reader or Writer interface as defined by q-io.
+
+Another question: how can user code know whether the property it get()s is a value or a Streamable ?
+
+The argument could be made that user code should know what type each Object property must contain. Right now I'm tending to following that argument. [Note: the test case for Object#getAll() will have to be updated. It will need to be able to detect Buffer objects in the reference object, which shall be used as the "raw" representations of large data.]
+
+Next steps:
+
+1) model-tests.js: implement a test suite for the Streamable interface - or actually two of them, one read-only, the other writing. Integrate these suites into the testReadOnlyObject() and testObject() suites. The test suites shall test both utf-8 and binary encoding.
+
+1b) (option) use q-io/fs to test the Streamable test suites.
+
+2) Extend ObjectWrapper to support ArrayBuffer fields (i.e. wrapping them into Streamables)
+
+
+2013-10-13
+----------
+
+Some more work today. I decided to implement removal from Collections through their items, i.e. CollectionItem#remove() and (as a side effect) CollectionItem#dispose().
+
+This approach does not require an index into a collection.
+
+I'm rather happy with the way this is taking shape.
+
+The time may be ripe to tackle a filesystem-based implementation.
+
+Or maybe not - first I need to figure out how to handle large properties (text and binary).
+
 2013-10-01
 ----------
 
