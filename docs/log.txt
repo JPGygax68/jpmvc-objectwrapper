@@ -1,3 +1,9 @@
+2013-10-19
+----------
+
+- Design decision to make: set() - can all properties accept all types of values ?
+  -> then update test suite
+
 2013-10-17
 ----------
 

@@ -23,7 +23,7 @@ function checkCollectionModelAgainstReference(model, reference) {
 
 function testReadOnlyObject(class_, model, reference) {
   
-  describe('It must implement the "Object (read-only)" interface', function() {
+  describe('must implement the "Object (read-only)" interface', function() {
   
     describe('#get()', function() {
       it('must give access to all properties', function(done) {
@@ -103,7 +103,7 @@ function testObject(class_, model, reference) {
   
     describe('#set()', function() {
     
-      it('Must allow properties to be modified', function(done) {
+      it('must allow properties to be modified', function(done) {
         var count = 0;
         q.all( _.map(reference, function(curval, name) {
           var oldval = curval;
@@ -122,7 +122,7 @@ function testObject(class_, model, reference) {
     
     describe('#dispose()', function() {
     
-      it('Must trigger a deleted() callback event', function(done) {
+      it('must trigger a deleted() callback event', function(done) {
         var triggered;
         model.deleted( function() { triggered = true } );
         model.dispose()
