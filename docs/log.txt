@@ -1,3 +1,17 @@
+2013-10-17
+----------
+
+Some progress today - though I got slowed down by a stupid mistake, once more. But: I have a working test subroutine for the read-only part of the new Streamable interface, and a test for that testsuite, using a mock-up Streamable object based on q-io/fs.
+
+Found out about the extremely useful before(), after(), beforeEach() and afterEach() functions of Mocha (or was it Should?).
+
+Next steps: 
+
+- move the new test suite to the test-lib folder
+- separate out the test suite testing code into a sub-folder "test" within test-lib ?
+- create another test suite for writeable Streamables
+
+
 2013-10-14
 ----------
 
@@ -13,7 +27,7 @@ Streamable#open() shall return an object conforming to the Reader or Writer inte
 
 Another question: how can user code know whether the property it get()s is a value or a Streamable ?
 
-The argument could be made that user code should know what type each Object property must contain. Right now I'm tending to following that argument. [Note: the test case for Object#getAll() will have to be updated. It will need to be able to detect Buffer objects in the reference object, which shall be used as the "raw" representations of large data.]
+The argument could be made that user code should know what type each Object property must contain. Right now I'm tending to follow that argument. [Note: the test case for Object#getAll() will have to be updated. It will need to be able to detect Buffer objects in the reference object, which shall be used as the "raw" representations of large data.]
 
 Next steps:
 

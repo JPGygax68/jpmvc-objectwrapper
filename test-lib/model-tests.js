@@ -4,6 +4,8 @@ var should = require('should');
 var _      = require('underscore');
 var q      = require('q');
 
+var streamable = require('./streamable');
+
 // Helper functions -------------------
 
 function checkObjectModelAgainstReference(model, reference) {
