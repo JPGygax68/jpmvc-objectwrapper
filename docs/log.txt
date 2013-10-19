@@ -1,8 +1,29 @@
+2013-10-19 (noon)
+----------
+
+A tiny bit of planning is needed at this point.
+
+I now want to introduce "streamable" properties to the Model concept (Streamable interface). In order to test this, the test suite functions need to be informed about which field(s) implement that concept.
+
+So, I think I should change and normalize the signatures of the test suites a bit. Maybe an "options" parameter will do the trick.
+
+Options, for both test suites (for read-only and for writeable models):
+- ref_object      (mandatory)       contains the "raw" JavaScript object to compare the model against
+- streamables     (optional)        array with the names of the fields that are Streamables
+
+Should a distinction be made between binary and text Streamables? I think not; that would just be unnecessary complexity.
+
+Ok, next step: change those signatures. ... done. But I forgot the collections:
+
+- ref_items       (mandatory)
+- new_items       (optional)        for the "writeable" test suite
+
+
 2013-10-19
 ----------
 
-- Design decision to make: set() - can all properties accept all types of values ?
-  -> then update test suite
+Took way too long again tonight - not sure why this time. The tmp library may have been the cause (removed now).
+
 
 2013-10-17
 ----------

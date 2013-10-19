@@ -10,8 +10,8 @@ var tests = require('../test-lib/model-tests');
 describe('ObjectWrapper', function() {
   var obj = { firstname: 'Jean-Pierre', lastname: 'Gygax' };
   var model = wrapper.wrap(obj);
-  tests.readOnlyObject('ObjectWrapper', model, obj);
-  tests.object('ObjectWrapper', model, obj);
+  tests.readOnlyObject('ObjectWrapper', model, { ref_object: obj } );
+  tests.object('ObjectWrapper', model, { ref_object: obj } );
 })
 
 describe('ArrayWrapper', function() {
@@ -20,8 +20,8 @@ describe('ArrayWrapper', function() {
     { name: 'Apollo 13', success: true, failure: true }
   ];
   var model = wrapper.wrap(arr);
-  tests.readOnlyCollection('ArrayWrapper', model, arr);
+  tests.readOnlyCollection('ArrayWrapper', model, { ref_items: arr } );
   
   var new_items = [ { firstname: 'Bugs', lastname: 'Bunny' }, { firstname: 'Daffy', lastname: 'Duck' } ];
-  tests.collection('ArrayWrapper', model, arr, new_items );
+  tests.collection('ArrayWrapper', model, { ref_items: arr, new_items: new_items } );
 })

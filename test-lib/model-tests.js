@@ -17,11 +17,14 @@ function checkObjectModelAgainstReference(model, reference) {
 }
 
 function checkCollectionModelAgainstReference(model, reference) {
+  // TODO
 }
 
 // Main functions -------------------------------
 
-function testReadOnlyObject(class_, model, reference) {
+function testReadOnlyObject(class_, model, options) {
+  
+  var reference = options.ref_object;
   
   describe('must implement the "Object (read-only)" interface', function() {
   
@@ -49,13 +52,57 @@ function testReadOnlyObject(class_, model, reference) {
   })
 }
 
-function testReadOnlyCollection(class_, model, reference) {
+function testObject(class_, model, options) {
+
+  var reference = options.ref_object;
+
+  describe('It must implement the "Object" interface', function() {
   
+    describe('#set()', function() {
+    
+      it('must allow properties to be modified', function(done) {
+        var count = 0;
+        q.all( _.map(reference, function(curval, name) {
+          var oldval = curval;
+          return q.when( model.get(name) )
+            .then( function(value)  { return model.set(name, value + value) } )
+            .then( function()       { return model.get(name) } )
+            .then( function(newval) { newval.should.equal(oldval+oldval) } )
+            .then( function()       { count ++ } )
+        }) )
+        .done( function() { 
+          if (count === 0) throw new Error('test failed because reference object has no properties?');
+          done();
+        })
+      })
+    })
+    
+    describe('#dispose()', function() {
+    
+      it('must trigger a deleted() callback event', function(done) {
+        var triggered;
+        model.deleted( function() { triggered = true } );
+        model.dispose()
+        .then( function() {
+          triggered.should.be.ok;
+        })
+        .done( function() { done() } )
+      })
+    })
+  })
+}
+
+//--- COLLECTIONS ---------------------
+
+function testReadOnlyCollection(class_, model, options) {
+
+  var reference = options.ref_items;
+
   describe('It must implement the "Collection (read-only)" interface:', function() {
   
     describe('#each()', function() {
       
-      it('must return a promise whose progress() method iterates over contained items:', function(done) {
+      it('must return a promise whose progress() method iterates over contained items', function(done) {
         var used = []; // "tick off" list
         var remaining = reference.length;
         
@@ -97,45 +144,10 @@ function testReadOnlyCollection(class_, model, reference) {
   })
 }
 
-function testObject(class_, model, reference) {
+function testCollection(class_, model, options) {
 
-  describe('It must implement the "Object" interface', function() {
-  
-    describe('#set()', function() {
-    
-      it('must allow properties to be modified', function(done) {
-        var count = 0;
-        q.all( _.map(reference, function(curval, name) {
-          var oldval = curval;
-          return q.when( model.get(name) )
-            .then( function(value)  { return model.set(name, value + value) } )
-            .then( function()       { return model.get(name) } )
-            .then( function(newval) { newval.should.equal(oldval+oldval) } )
-            .then( function()       { count ++ } )
-        }) )
-        .done( function() { 
-          if (count === 0) throw new Error('test failed because reference object has no properties?');
-          done();
-        })
-      })
-    })
-    
-    describe('#dispose()', function() {
-    
-      it('must trigger a deleted() callback event', function(done) {
-        var triggered;
-        model.deleted( function() { triggered = true } );
-        model.dispose()
-        .then( function() {
-          triggered.should.be.ok;
-        })
-        .done( function() { done() } )
-      })
-    })
-  })
-}
-
-function testCollection(class_, model, original_item_refs, new_item_refs) {
+  var original_item_refs = options.ref_items;
+  var new_item_refs = options.new_items;
 
   describe('must implement the "Collection" interface:', function() {
   
@@ -210,6 +222,8 @@ function testCollection(class_, model, original_item_refs, new_item_refs) {
     })
   })
 }
+
+//--- MODULE EXPORTS ----------------------------
 
 module.exports = {
   readOnlyObject: testReadOnlyObject,
