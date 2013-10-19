@@ -25,6 +25,7 @@ function checkCollectionModelAgainstReference(model, reference) {
 function testReadOnlyObject(class_, model, options) {
   
   var reference = options.ref_object;
+  var streamables = options.streamables;
   
   describe('must implement the "Object (read-only)" interface', function() {
   
@@ -44,11 +45,20 @@ function testReadOnlyObject(class_, model, options) {
       })
     })
     
-    /*
-    describe('#isEqual()', function() {
-      it('must return true if and only if
-    })
-    */
+    if (streamables) {
+      
+      describe('#get() of a "readable" (read-only streamable) field', function() {
+        describe('object returned by #get() must implement "Readable" interface', function() {
+          q.all( _.map(streamables, function(descr) {
+            return model.get(descr.name)
+              .then( function(field) { streamable.testReadOnlyStreamable(class_, field, descr.content) } )
+          }) )
+          .done( function() { done() } )
+        })
+      })
+    
+    } // if streamables
+  
   })
 }
 

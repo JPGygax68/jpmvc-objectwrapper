@@ -9,7 +9,7 @@ So, I think I should change and normalize the signatures of the test suites a bi
 
 Options, for both test suites (for read-only and for writeable models):
 - ref_object      (mandatory)       contains the "raw" JavaScript object to compare the model against
-- streamables     (optional)        array with the names of the fields that are Streamables
+- streamables     (optional)        array with the objects, each containing a field name and its reference content (name, content)
 
 Should a distinction be made between binary and text Streamables? I think not; that would just be unnecessary complexity.
 
@@ -18,6 +18,7 @@ Ok, next step: change those signatures. ... done. But I forgot the collections:
 - ref_items       (mandatory)
 - new_items       (optional)        for the "writeable" test suite
 
+Ok, back to implementing streamable tests.
 
 2013-10-19
 ----------
