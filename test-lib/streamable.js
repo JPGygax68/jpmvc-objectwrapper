@@ -1,7 +1,11 @@
 "use strict";
 
-// TODO: move this to test-lib
-
+/*  NOTE: this test module is not currently in use. As of 2013-10-20, I have abandoned the idea of
+    wrapping binary or big objects in streams.
+    The Streamable interface/concept might still be used in the future, perhaps as an extension to
+    the minimal specification.
+ */
+ 
 var should = require('should');
 
 var fs        = require('fs');

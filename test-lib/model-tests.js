@@ -4,25 +4,25 @@ var should = require('should');
 var _      = require('underscore');
 var q      = require('q');
 
-var streamable = require('./streamable');
+//var streamable = require('./streamable');
 
 // Helper functions -------------------
 
+function compareValues(val1, val2) {
+  if (val1 instanceof Uint8Array) {
+    val2.should.be.instanceOf(Uint8Array);
+    val1.should.have.length(val2.length);
+    for (var i = 0; i < val1.length; i ++) val1[i].should.equal(val2[i]);
+  }
+  else
+    val1.should.equal(val2);
+}
+
 function checkObjectModelAgainstReference(model, reference) {
 
-  return q.all( _.map(_.clone(reference), function(refval, name) {
+  return q.all( _.map(reference, function(refval, name) {
     return q.when( model.get(name) )
-      .then( function(value) {
-        if (refval instanceof Uint8Array) {
-          return value.read('b').then( function(content) { 
-            content.length.should.be.equal(refval.length);
-            for (var i = 0; i < refval.length; i ++) content[i].should.be.equal(refval[i]);
-          })
-        }
-        else {
-          value.should.equal(refval) 
-        }
-      })
+      .then( function(value) { compareValues(value, refval) } )
   }))
 }
 
@@ -35,7 +35,7 @@ function checkCollectionModelAgainstReference(model, reference) {
 function testReadOnlyObject(class_, model, options) {
   
   var reference = options.ref_object;
-  var streamables = options.streamables;
+  //var streamables = options.streamables;
   
   describe('must implement the "Object (read-only)" interface', function() {
   
@@ -55,20 +55,6 @@ function testReadOnlyObject(class_, model, options) {
       })
     })
     
-    if (streamables) {
-      
-      describe('#get() of a "readable" (read-only streamable) field', function() {
-        describe('object returned by #get() must implement "Readable" interface', function() {
-          q.all( _.map(streamables, function(descr) {
-            return model.get(descr.name)
-              .then( function(field) { streamable.testReadOnlyStreamable(class_, field, descr.content) } )
-          }) )
-          .done( function() { done() } )
-        })
-      })
-    
-    } // if streamables
-  
   })
 }
 
@@ -85,15 +71,25 @@ function testObject(class_, model, options) {
         q.all( _.map(reference, function(curval, name) {
           var oldval = curval;
           return q.when( model.get(name) )
-            .then( function(value)  { return model.set(name, value + value) } )
+            .then( function(value)  { return model.set(name, doubleValue(value)) } )
             .then( function()       { return model.get(name) } )
-            .then( function(newval) { newval.should.equal(oldval+oldval) } )
+            .then( function(newval) { compareValues(newval, doubleValue(oldval)) } )
             .then( function()       { count ++ } )
         }) )
         .done( function() { 
           if (count === 0) throw new Error('test failed because reference object has no properties?');
           done();
         })
+        
+        function doubleValue(val) {
+          if (val instanceof Uint8Array) {
+            var res = new Uint8Array(2*val.length);
+            for (var i = 0; i < val.length; i++) res[i] = val[i], res[val.length+i] = val[i];
+            return res;
+          }
+          else return val + val;
+        }
+        
       })
     })
     

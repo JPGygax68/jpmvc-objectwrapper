@@ -22,32 +22,7 @@ ObjectWrapper.prototype.getPropertyNames = function() {
 ObjectWrapper.prototype.get = function(key) {
   var def = q.defer();
   var self = this;
-  if (this.data[key] instanceof Uint8Array) {
-    def.resolve( {    
-      open: function(options) {
-        var def = q.defer();
-        var flags;
-        if (typeof options === 'string') flags = options;
-        else {
-          options = options || {};
-          flags = options.flags;
-        }
-        def.resolve( {
-          forEach: function(writer) { writer(this.data[key]); }
-        })
-        return def.promise;
-      },
-      
-      read: function() {
-        var ref = q.defer();
-        ref.resolve( self.data[key] );
-        return ref.promise;
-      }
-    })
-  }
-  else {
-    def.resolve(this.data[key]);
-  }
+  def.resolve(this.data[key]);
   return def.promise;
 }
 

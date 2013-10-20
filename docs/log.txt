@@ -1,3 +1,15 @@
+2013-10-20
+----------
+
+I think I made a rather stupid mistake.
+
+All this stuff about the "Streamable" interface - it sounds nice, but thinking about it, its usefulness is rather limited. It has no place in a piece of software that aims to be "the simplest possible to get the job done".
+
+Consequently, I'm changing the specification to this: get() shall return promises for values in all cases. The values can be simple types, or they can be byte arrays, represented by Uint8Array objects. (No decision is made at this point about standard JavaScript arrays and objects.)
+Object#set() shall of course work conversely.
+
+On to changing the code...
+
 2013-10-19 (noon)
 ----------
 
