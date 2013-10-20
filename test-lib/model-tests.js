@@ -12,7 +12,17 @@ function checkObjectModelAgainstReference(model, reference) {
 
   return q.all( _.map(_.clone(reference), function(refval, name) {
     return q.when( model.get(name) )
-      .then( function(value) { value.should.equal(refval) } )
+      .then( function(value) {
+        if (refval instanceof Uint8Array) {
+          return value.read('b').then( function(content) { 
+            content.length.should.be.equal(refval.length);
+            for (var i = 0; i < refval.length; i ++) content[i].should.be.equal(refval[i]);
+          })
+        }
+        else {
+          value.should.equal(refval) 
+        }
+      })
   }))
 }
 
