@@ -1,3 +1,85 @@
+2013-10-21
+----------
+
+Ok. The Streamable idea is gone (for now), and the ObjectWrapper class can work with Uint8Arrays. 
+
+Somehow, I'm not really satisfied with the situation. What about the other ArrayBuffer view types (Int8Array, etc.)?
+
+More importantly, it's time to move toward practical matters now. What am I trying to accomplish? When I started out with this MVC project, my goal was to lay the first brick for a future library that would enable programmers to work with all kinds of data stores.
+
+Let's review what this actually means in the real world:
+
+(1) From another project I'm working on (Locsim) comes the idea of using the file system, i.e. JSON files and binary (png/jpeg) files as the back-end of a data store.
+
+(2) The obvious players: CouchDB and MongoDB certainly need to be leveraged at some point.
+
+(3) Classical Object-to-Relational Mapping might come into play as well.
+
+(4) Classical XML or JSON
+
+(5) Others: a strictly binary, compact format; or anything else not mentioned above.
+
+Not all of this needs to implemented right away, or even at all. But all of it should be possible.
+
+An important thing to keep in mind is that the whole Captn project is targeting beginner programmers (among others), or even non-programmers such as web designers. How would such a person approach the idea of using a database?
+
+This leads to the subject of modelling. Modelling must be as straightforward as humanly possible. The wizard (or whatever) asks: "What do you need to store?" (-> customers, orders), then, for each answer: "What gets written in each entry of that table?" (-> date&time, item order code, etc.)
+
+[This reminds me: we have no explicit support for date/time fields as yet. Is this needed, and does it imply the need for type meta-information (which wasn't necessary until now)?]
+
+Therefore, it's time now to think about meta-data. We need to describe: (1) collections, (2) objects. 
+
+Data types: numbers; strings; date/time; objects; collections; binary.
+
+It's obvious I need to extend the specifications with a meta-data interface. How about a Object#metaData() method that returns a list of field descriptors: name + type ?
+
+No need to strongly type objects. However, object factories (such as Collection implementations) shall accept an "options" parameter, which may contain a member "fields" containing field descriptors. Can be used to throw exceptions when the back-end doesn't support a field or field/type combination.
+
+Ok, this is going to be simple, and doesn't need to be done right now.
+
+The next steps should be the implementation of the file system based Data Store (btw this shall be an official term within the JP-MVC library).
+
+What we need:
+- The top-level collection is implemented as a JSON file containing an array-like object containing strings.
+- These strings are the filenames (extensionless) of JSON files describing instruments ("instrument files").
+- The instrument files contain standard data types (numbers, strings, objects), but also reference picture files.
+
+The fastest way to do this is probably implement it from scratch, without trying to use or create library code.
+- When creating a new instrument, the "name" field is used to determine the name of the instrument file.
+- Picture files can be treated like binary fields, but they need to be given names. How to associate a name with an otherwise binary field?
+  -> introduce the concept of "attributes" (will discuss below)
+- How to save or discard changes? This has not been specified or even discussed yet. Will discuss below.
+
+Attributes
+
+Attributes shall be simple, just as HTML/XML attributes (to and from which they should translate effortlessly at some point in the future). So, they should just be name-value pairs of strings.
+
+Specification: Data Stores may support attributes by providing the setAttr(<name>, <value>) and getAttr(<name>) methods on some or all objects and collections. In contrast to other methods of the Object and Collection interfaces, these methods shall be synchronous. 
+
+This specification introduces a restriction when copying from one data store to another, in that the target store must always support a superset of the attributes supported by the source store. One way to reduce this problem would be to require that all implementations supporting attributes support them anywhere and in any quantity. Implementations could do this through a non-enumerable property.
+
+Save & discard
+
+The bits of specification so far implied that modifications on properties were definitive and non-undoable, which is natural for the Wrapper implementations created so far. The situation is different though for an implementation based on files, so a specification needs to be formulated than can unify that aspect for all possible implementations.
+
+This subject could grow very complex, reaching into atomic transactions and concurrency locking. In keeping with the idea of "as simple as possible", I now define that a Data Store implementation shall, for the time being, support a single method Store#commitChanges().
+
+The Object and Collection interfaces however are not necessarily dependent on the existence of a Store implementation - they can be provided "as-is" (which is the case with ObjectWrapper and ArrayWrapper so far).
+
+In fact, I have not yet defined what a Store must do. I do so now: a Store implementation must provide the following methods:
+
+- Store#getRoot(): returns a promise for the root Collection or Object, or null if there is none.
+- Store#commitChanges(): commits the changes, if not done already. Promisified, can be a no-op
+
+Note: there is not "discard" or "rollback" or "undo" yet. I'm deliberately (though lazily) keeping them out of the specification so far.
+
+Next steps:
+
+- Create an embryotic test suite for Store
+- Make the jp-mvc library available system-wide (link)
+- Start implementing InstrumentFSStore as part of the Instrumente Locsim module. Use TDD, operating on a copy of the DB folder.
+
+
 2013-10-20
 ----------
 
