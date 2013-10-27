@@ -10,5 +10,28 @@
   },
   "dependencies": {
     "q": "~0.9.7"
+  },
+  "main": "main.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JPGygax68/jpmvc-objectwrapper.git"
+  },
+  "keywords": [
+    "jpmvc",
+    "wrapper",
+    "model",
+    "collection"
+  ],
+  "author": "Jean-Pierre Gygax",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JPGygax68/jpmvc-objectwrapper/issues"
   }
 }
