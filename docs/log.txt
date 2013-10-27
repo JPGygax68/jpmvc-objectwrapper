@@ -1,3 +1,25 @@
+2013-10-27
+----------
+
+Observation:
+
+The clone URLs that github offers (both https: and git:) are unsuitable for "npm install", the URL must be composed manually. Also, "npm update" does not automatically update to the latest version from git.
+
+------
+
+The whole idea of TDD is proving to be more tedious than expected. Reasons:
+
+1) The promis'ified asynchronous interface.
+
+2) The need to come up with test cases.
+
+3) The general extra work coming from the fact that analysing output programmatically is just so well supported.
+
+(2) and (3) may need a bit of exploration. Why is this difficult?
+
+One part is that code editors still offer no really good ways of navigating code, or of generating and managing test cases automatically. There are opportunities that way.
+
+
 2013-10-21
 ----------
 
