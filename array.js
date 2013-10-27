@@ -27,7 +27,7 @@ ArrayWrapper.prototype.each = function() {
   var that = this;
   setTimeout( function() {
     _.each(that.data, function(item, i) {
-      def.notify(item);
+      def.notify( cache.wrap(item, Object) ); // we're assuming that Collection elements are Objects for now
     })
     def.resolve();  
   }, 0);
